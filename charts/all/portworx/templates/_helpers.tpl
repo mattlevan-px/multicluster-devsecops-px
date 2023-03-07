@@ -26,14 +26,10 @@
   {{- if (eq "/" (.Values.customRegistryURL | regexFind "/")) -}}
     {{- cat (trim .Values.customRegistryURL) "/oci-monitor:" (trim .Values.versions.ociMon) | replace " " ""}}
   {{- else -}}
-    {{- cat (trim .Values.customRegistryURL) "/oci-monitor:" (trim .Values.versions.ociMon)| replace " " ""}}
+    {{- cat (trim .Values.customRegistryURL) "/oci-monitor:" (trim .Values.versions.ociMon) | replace " " ""}}
   {{- end -}}
 {{- else -}}
-  {{- if eq $product "PX-ENTERPRISE-DR" }}
-    {{- cat (trim .Values.repo.dr) "/oci-monitor:" (trim .Values.versions.ociMon) | replace " " ""}}
-  {{- else }}
-    {{- cat (trim .Values.repo.enterprise) "/oci-monitor:" (trim .Values.versions.ociMon) | replace " " ""}}
-  {{- end }}
+  {{- cat "portworx/oci-monitor:" (trim .Values.versions.ociMon) | replace " " ""}}
 {{- end -}}
 {{- end -}}
 
@@ -46,11 +42,7 @@
     {{- cat (trim .Values.customRegistryURL) "/stork:" (trim .Values.versions.stork) | replace " " ""}}
   {{- end -}}
 {{- else -}}
-  {{- if eq $product "PX-ENTERPRISE-DR" }}
-    {{- cat (trim .Values.repo.dr) "/stork:" (trim .Values.versions.stork) | replace " " ""}}
-  {{- else }}
-    {{- cat (trim .Values.repo.enterprise) "/stork:" (trim .Values.versions.stork) | replace " " ""}}
-  {{- end }}
+  {{- cat "portworx/stork:" (trim .Values.versions.stork) | replace " " ""}}
 {{- end -}}
 {{- end -}}
 
@@ -63,11 +55,7 @@
     {{- cat (trim .Values.customRegistryURL) "/autopilot:" (trim .Values.versions.autoPilot) | replace " " ""}}
   {{- end -}}
 {{- else -}}
-  {{- if eq $product "PX-ENTERPRISE-DR" }}
-    {{- cat (trim .Values.repo.dr) "/autopilot:" (trim .Values.versions.autoPilot) | replace " " ""}}
-  {{- else }}
-    {{- cat (trim .Values.repo.enterprise) "/autopilot:" (trim .Values.versions.autoPilot) | replace " " ""}}
-  {{- end }}
+  {{- cat "portworx/autopilot:" (trim .Values.versions.autoPilot) | replace " " ""}}
 {{- end -}}
 {{- end -}}
 
@@ -80,10 +68,6 @@
     {{- cat (trim .Values.customRegistryURL) "/px-operator:" (trim .Values.versions.operator) | replace " " ""}}
   {{- end -}}
 {{- else -}}
-  {{- if eq $product "PX-ENTERPRISE-DR" }}
-    {{- cat (trim .Values.repo.dr) "/px-operator:" (trim .Values.versions.operator) | replace " " ""}}
-  {{- else }}
-    {{- cat (trim .Values.repo.enterprise) "/px-operator:" (trim .Values.versions.operator) | replace " " ""}}
-  {{- end }}
+  {{- cat "portworx/px-operator:" (trim .Values.versions.operator) | replace " " ""}}
 {{- end -}}
 {{- end -}}

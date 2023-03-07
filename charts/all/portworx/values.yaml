@@ -23,13 +23,14 @@ csi: true                          # Enable CSI
 
 internalKVDB: true                  # internal KVDB
 
-customRegistryURL: none
+customRegistryURL: 
 registrySecret:
 
 serviceAccount:
 
 repo:
-  enterprise: portworx
+  enterprise: docker.io/portworx
+  dr: docker.io/portworx
 
 
 versions:
