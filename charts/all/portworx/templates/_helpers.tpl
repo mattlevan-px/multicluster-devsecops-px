@@ -42,7 +42,7 @@
     {{- cat (trim .Values.customRegistryURL) "/stork:" (trim .Values.versions.stork) | replace " " ""}}
   {{- end -}}
 {{- else -}}
-  {{- cat "portworx/stork:" (trim .Values.versions.stork) | replace " " ""}}
+  {{- cat "openstorage/stork:" (trim .Values.versions.stork) | replace " " ""}}
 {{- end -}}
 {{- end -}}
 
