@@ -42,7 +42,7 @@ clusterGroup:
 
     portworx:
       name: portworx-operator
-      namespace: openshift-operators
+      namespace: portworx
       channel: stable
 
     quay:
