@@ -44,6 +44,7 @@ clusterGroup:
       name: portworx-operator
       namespace: portworx
       channel: stable
+      source: certified-operators
 
     quay:
       name: quay-operator
