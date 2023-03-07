@@ -15,6 +15,7 @@ clusterGroup:
   - devsecops-ci
   - openshift-storage
   - quay-enterprise
+  - portworx
 
 #  subscriptions:  OpenShift Operator subscriptions from OLM/OperatorHub
 #  - name: the Operator package name (required)
@@ -37,7 +38,12 @@ clusterGroup:
     odf:
       name: odf-operator
       namespace: openshift-storage
-      channel: stable-4.10
+      channel: stable-4.11
+
+    portworx:
+      name: portworx-operator
+      namespace: openshift-operators
+      channel: stable
 
     quay:
       name: quay-operator
@@ -51,6 +57,7 @@ clusterGroup:
   - hub
   - opp
   - external-secrets
+  - portworx
 
   applications:
     acm:
@@ -81,6 +88,12 @@ clusterGroup:
       namespace: openshift-storage
       project: opp
       path: charts/hub/odf
+
+    portworx:
+      name: portworx
+      namespace: portworx
+      project: portworx
+      path: charts/all/portworx
 
     quay-registry:
       name: quay-registry

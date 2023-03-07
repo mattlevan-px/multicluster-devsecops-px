@@ -1,0 +1,91 @@
+{{- $usefileSystemDrive := .Values.storage.usefileSystemDrive | default false }}
+{{- $drives := .Values.storage.drives | default "none" }}
+{{- $usedrivesAndPartitions := .Values.storage.usedrivesAndPartitions | default false }}
+{{- $maxStorageNodesPerZone := int64 .Values.storage.maxStorageNodesPerZone | int64 }}
+{{- $dataInterface := .Values.dataInterface | default "none" }}
+{{- $managementInterface := .Values.managementInterface | default "none" }}
+{{- $registrySecret := .Values.registrySecret | default "none" }}
+{{- $namespace := .Values.namespace | default "portworx" }}
+{{- $serviceAccount := .Values.serviceAccount | default "none" }}
+{{- $customRegistryURL := .Values.customRegistryURL | default "none" }}
+
+apiVersion: core.libopenstorage.org/v1
+kind: StorageCluster
+metadata:
+  name: {{ .Values.clusterName }}
+  namespace: {{ $namespace }}
+  annotations:
+    #{{- if eq .Values.global.clusterPlatform "AWS" }}
+    portworx.io/is-eks: "true"
+    #{{- end }}
+    portworx.io/is-openshift: "true"
+    portworx.com/install-source: helm/{{.Release.Service}}-r{{.Release.Revision}}
+    portworx.com/helm-vars: chart="{{.Chart.Name}}-{{.Chart.Version}}"{{range $k, $v := .Values }}{{if $v}},{{ $k }}="{{ $v }}" {{end}}{{end}}
+spec:
+  deleteStrategy:
+    type: UninstallAndWipe
+  env:
+    {{- if not (eq $serviceAccount "none") }}
+    - name: PX_SERVICE_ACCOUNT
+      value: {{ $serviceAccount }}
+    {{- end }}
+    # TODO: Change this hardcoded image path to an ECR registry path with px-enterprise image (PWX-27961)
+    - name: PX_IMAGE
+      value: docker.io/portworx/px-enterprise:2.13.0
+    - name: PX_NAMESPACE
+      value: {{ $namespace }}
+  image: "{{template "px.getOCIImage" . }}"
+  imagePullPolicy: Always
+  {{- if not (eq $registrySecret "none") }}
+  imagePullSecret: {{ $registrySecret }}
+  {{- end }}
+  {{- if not (eq $customRegistryURL "none") }}
+  customImageRegistry: {{ $customRegistryURL }}
+  {{- end }}
+  kvdb:
+    internal: true
+  {{- if eq $drives "none" }}
+  storage:
+    useAllWithPartitions: {{ $usedrivesAndPartitions }}
+    forceUseDisks: {{ $usefileSystemDrive }}
+    journalDevice: auto
+    kvdbDevice: type=gp2,size=150
+  {{- else }}
+  cloudStorage:
+    deviceSpecs:
+    {{- $driveNames := $drives | split ";" }}
+    {{- range $index, $name := $driveNames }}
+    - {{ $name }}
+    {{- end }}
+    journalDeviceSpec: auto
+    kvdbDeviceSpec: type=gp2,size=150
+    {{- if ne $maxStorageNodesPerZone 0 }}
+    maxStorageNodesPerZone: {{ $maxStorageNodesPerZone }}
+    {{- end }}
+  {{- end }}
+  {{- if ne .Values.secretType "k8s" }}
+  secretsProvider: {{ .Values.secretType }}
+  {{- end }}
+  {{- if or (ne $dataInterface "none") (ne $managementInterface "none") }}
+  network:
+    {{- if ne $dataInterface "none" }}
+    dataInterface: {{ .Values.network.dataInterface }}
+    {{- end }}
+    {{- if ne $managementInterface "none" }}
+    mgmtInterface: {{ .Values.network.managementInterface }}
+    {{- end }}
+  {{- end }}
+  secretsProvider: k8s
+  stork:
+    enabled: true
+    image: "{{template "px.getStorkImage" . }}"
+  autopilot:
+    enabled: true
+    image: "{{template "px.getAutopilotImage" . }}"
+    providers:
+    - name: default
+      type: prometheus
+      params:
+        url: http://prometheus:9090
+  csi:
+    enabled: {{ .Values.csi  | default "true" }}
