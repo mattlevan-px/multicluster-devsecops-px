@@ -41,7 +41,7 @@ clusterGroup:
       channel: stable-4.11
 
     portworx:
-      name: portworx-operator
+      name: portworx-certified
       namespace: portworx
       channel: stable
       source: certified-operators
